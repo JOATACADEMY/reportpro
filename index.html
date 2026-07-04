@@ -194,7 +194,7 @@ button:disabled {
 <button id="submitBtn" onclick="submitForm()">Submit & Get Download</button>
 
 <div id="downloadLink">
-  <a href="https://github.com/JOATACADEMY/reportpro/releases/download/v1.0/JOAT_ReportPro_Setup.zip" target="_blank">
+  <a id="downloadBtn" href="https://github.com/JOATACADEMY/reportpro/releases/download/v1.0/JOAT_ReportPro_Setup.zip" target="_blank">
     ⬇ Download JOAT ReportPro v1.0 (163 MB)
   </a>
 </div>
@@ -238,12 +238,13 @@ function submitForm() {
 
   fetch(WEB_APP_URL, {
     method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ school, country, region, email })
   })
   .then(() => {
-    showMessage("Submission successful. Download is now available.", "success");
+    showMessage("Submission successful. Download ready.", "success");
 
     document.getElementById("downloadLink").style.display = "block";
     document.getElementById("downloadLink").scrollIntoView({ behavior: "smooth" });
