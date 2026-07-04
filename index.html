@@ -1,4 +1,4 @@
-<!DOCTYPE html>   
+<!DOCTYPE html>    
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -42,6 +42,7 @@ body {
   font-size: 22px;
   font-weight: bold;
   color: #004080;
+  letter-spacing: 1px;
 }
 
 .logo-subtitle {
@@ -86,8 +87,9 @@ input {
   font-size: 15px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  width: 100%;
   box-sizing: border-box;
+  transition: border 0.3s;
+  width: 100%;
 }
 
 input:focus {
@@ -95,26 +97,36 @@ input:focus {
   outline: none;
 }
 
-button {
+button, #downloadLink a {
+  display: block;
   width: 100%;
-  padding: 14px;
+  text-align: center;
+  padding: 14px 0;
   font-size: 16px;
   font-weight: bold;
   border-radius: 5px;
-  border: none;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+button {
   background: #0066ff;
   color: #fff;
-  cursor: pointer;
+  border: none;
   margin-top: 15px;
 }
 
 button:hover {
   background: #0051cc;
+  transform: scale(1.03);
 }
 
 button:disabled {
   background: #aaa;
   cursor: not-allowed;
+  transform: none;
 }
 
 #downloadLink {
@@ -123,19 +135,13 @@ button:disabled {
 }
 
 #downloadLink a {
-  display: block;
-  text-align: center;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
-  text-decoration: none;
-  background: linear-gradient(135deg, #28a745, #1e7e34);
-  color: white;
+  background: #28a745;
+  color: #fff;
 }
 
 #downloadLink a:hover {
-  transform: scale(1.02);
+  background: #1f8f3e;
+  transform: scale(1.03);
 }
 
 #message {
@@ -150,17 +156,13 @@ button:disabled {
 .error {
   background: #fdecea;
   color: #a94442;
+  border: 1px solid #f5c6cb;
 }
 
 .success {
   background: #e6fffa;
   color: #155724;
-}
-
-@media (max-width: 600px) {
-  .form-row {
-    flex-direction: column;
-  }
+  border: 1px solid #c3e6cb;
 }
 </style>
 </head>
@@ -172,7 +174,7 @@ button:disabled {
 <a href="https://joatsms.github.io/joat-sms/" class="back-home">← Back to Home</a>
 
 <div class="logo">
-  <img src="Mylogo.png" alt="Logo">
+  <img src="Mylogo.png" alt="JOAT ReportPro Logo">
   <div class="logo-title">JOAT ReportPro</div>
   <div class="logo-subtitle">Official 2026 Release</div>
 </div>
@@ -180,13 +182,13 @@ button:disabled {
 <h2>Fill Your Info to Download</h2>
 
 <div class="form-row">
-  <input type="text" id="school" placeholder="School Name">
-  <input type="text" id="country" placeholder="Country">
+  <input type="text" id="school" placeholder="School Name" required>
+  <input type="text" id="country" placeholder="Country" required>
 </div>
 
 <div class="form-row">
-  <input type="text" id="region" placeholder="Region / State">
-  <input type="email" id="email" placeholder="Email Address">
+  <input type="text" id="region" placeholder="Region / State" required>
+  <input type="email" id="email" placeholder="Email Address" required>
 </div>
 
 <div id="message"></div>
@@ -194,15 +196,16 @@ button:disabled {
 <button id="submitBtn" onclick="submitForm()">Submit & Get Download</button>
 
 <div id="downloadLink">
-  <a id="downloadBtn" href="https://github.com/JOATACADEMY/reportpro/releases/download/v1.0/JOAT_ReportPro_Setup.zip" target="_blank">
-    ⬇ Download JOAT ReportPro v1.0 (163 MB)
+  <a href="https://github.com/JOATACADEMY/reportpro/releases/download/v1.0/JOAT_ReportPro_Setup.zip" download>
+    Download JOAT ReportPro
   </a>
 </div>
 
 </div>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzUfQHzdcWcxZ57Amh37-9Xq5A2GWShS_VeuIzIc4GZXgQrzQbxqXmCZslTbDiVqmkISA/exec";
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbzUfQHzdcWcxZ57Amh37-9Xq5A2GWShS_VeuIzIc4GZXgQrzQbxqXmCZslTbDiVqmkISA/exec";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -220,40 +223,32 @@ function submitForm() {
   const email = document.getElementById("email").value.trim();
   const btn = document.getElementById("submitBtn");
 
-  if (btn.disabled) return;
-
   if (!school || !country || !region || !email) {
     showMessage("All fields are required.", "error");
     return;
   }
 
   if (!EMAIL_REGEX.test(email)) {
-    showMessage("Enter a valid email address.", "error");
+    showMessage("Please enter a valid email address.", "error");
     return;
   }
 
   btn.disabled = true;
   btn.innerText = "Processing...";
-  showMessage("Submitting your information...", "success");
+  showMessage("Submitting your information, please wait…", "success");
 
   fetch(WEB_APP_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ school, country, region, email })
   })
   .then(() => {
-    showMessage("Submission successful. Download ready.", "success");
-
+    showMessage("Success! You may now download the software.", "success");
     document.getElementById("downloadLink").style.display = "block";
-    document.getElementById("downloadLink").scrollIntoView({ behavior: "smooth" });
-
-    btn.disabled = false;
-    btn.innerText = "Submit & Get Download";
   })
   .catch(() => {
-    showMessage("Network error. Try again.", "error");
+    showMessage("A network error occurred. Please try again.", "error");
     btn.disabled = false;
     btn.innerText = "Submit & Get Download";
   });
